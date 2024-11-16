@@ -1,6 +1,8 @@
 import React from 'react';
-import logo from './logo.svg';
+import logo from '../../logo.svg';
 import './App.css';
+import Card from '../Card/Card'
+import Topic from '../Topic/Topic';
 
 function App() {
   return (
@@ -18,6 +20,11 @@ function App() {
         >
           Learn React
         </a>
+
+        <Card/>
+        <br/>
+        <Topic/>
+
       </header>
     </div>
   );

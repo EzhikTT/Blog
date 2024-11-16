@@ -1,0 +1,20 @@
+div.card {
+    display: flex;
+    border: 1px solid white;
+}
+div.card > div.img {
+    width: 160px;
+    height: 160px;
+}
+div.card > div.img > img {
+    width: 100%;
+    height: 100%;
+}
+div.card > div.body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+div.card > div.body > section {
+    margin: auto 0;
+}

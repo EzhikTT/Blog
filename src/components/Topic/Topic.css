@@ -1,0 +1,23 @@
+div.topic {}
+div.topic > div.body {
+    border: 1px solid white;
+}
+div.topic div.body {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    align-items: start;
+    min-width: 500px;
+}
+div.topic div.body > div.text {
+    margin-left: 30px;
+    padding: 10px 0;
+}
+div.topic div.body > div.date {
+    margin-left: auto;
+}
+
+div.topic div.comments {}
+div.topic div.comments > div.comment {
+    margin-left: 15px;
+}
