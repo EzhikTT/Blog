@@ -1,10 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from '../../logo.svg';
 import './App.css';
 import Card from '../Card/Card'
-import Topic from '../Topic/Topic';
+import Topic, { TopicType } from '../Topic/Topic';
+import Popup from '../Popup/Popup';
 
 function App() {
+
+  const [isShow, setIsShow] = useState(false) // === Array
+
+  const [topics, setTopics] = useState<TopicType[]>([])
+
+  const addTopic = () => {}
+
+  const onClick = () => {
+    setIsShow(true)
+  }
+
+  const onClosePopup = () => {
+    setIsShow(false)
+  }
+
+  const onToggleShowingPopup = () => {
+    setIsShow(!isShow)
+  }
+
   return (
     <div className="App">
       <header className="App-header">
@@ -23,7 +43,21 @@ function App() {
 
         <Card/>
         <br/>
-        <Topic/>
+        
+        <Topic/> {/* .map() */}
+        <Popup title={<span>'Какой-то заголовок'</span>}
+               content={<Topic/>}
+               isShow={isShow}
+               onCancel={onClosePopup} // onCancel={() => {setIsShow(false)}}
+               onSubmit={onClosePopup} // onToggleShowingPopup
+               />
+
+        <br/><br/>
+        <button onClick={onClick} // onToggleShowingPopup
+                >
+                  show popup
+        </button> 
+        <br/><br/>
 
       </header>
     </div>

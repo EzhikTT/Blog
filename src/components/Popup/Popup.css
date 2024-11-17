@@ -1,0 +1,51 @@
+.popup {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    background-color: rgba(0,0,0,.2);
+}
+.popup.hide {
+    display: none;
+}
+
+.popup > .body {
+    display: flex;
+    flex-direction: column;
+
+    background-color: white;
+    color: black;
+
+    padding: 15px;
+    border-radius: 3px;
+
+    max-height: 80vh;
+    overflow: scroll;
+}
+
+.popup > .body > footer {
+    margin-top: 15px;
+    display: flex;
+    justify-content: end;
+}
+.popup > .body > footer > button {
+    border: none;
+    color: white;
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 5px;
+}
+.popup > .body > footer > button:first-child {
+    margin-right: 20px;
+    background-color: red; 
+}
+.popup > .body > footer > button:last-child {
+    background-color: green;
+}
