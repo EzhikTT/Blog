@@ -1,6 +1,6 @@
 div.topic {}
 div.topic > div.body {
-    border: 1px solid white;
+    border: 1px solid black;
 }
 div.topic div.body {
     display: flex;
@@ -20,5 +20,5 @@ div.topic div.body > div.date {
 div.topic div.comments {}
 div.topic div.comments > div.comment {
     margin-left: 30px;
-    border: 1px solid greenyellow;
+    border: 1px solid green;
 }

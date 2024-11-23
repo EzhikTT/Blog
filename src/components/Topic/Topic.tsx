@@ -10,62 +10,17 @@ export type TopicType = {
 }
 
 const Topic = (props: TopicType) => {
-
-    const comments = [
-        {
-            author: "какой-то автор",
-            text: "какой-то текст",
-            date: "сегодня",
-            comments: []
-        },
-        {
-            author: "какой-то автор",
-            text: "какой-то текст",
-            date: "сегодня",
-            comments: [
-                {
-                    author: "какой-то автор",
-                    text: "какой-то текст",
-                    date: "сегодня",
-                    comments: [
-                        {
-                            author: "какой-то автор",
-                            text: "какой-то текст",
-                            date: "сегодня",
-                            comments: []
-                        },
-                    ]
-                },
-                {
-                    author: "какой-то автор",
-                    text: "какой-то текст",
-                    date: "сегодня",
-                    comments: []
-                },
-            ]
-        },
-        {
-            author: "какой-то автор",
-            text: "какой-то текст",
-            date: "сегодня",
-            comments: []
-        },
-    ]
-
     return (
         <div className="topic">
             <div className="body">
-                <div className="author">Какой-то автор</div>
-                <div className="text">Какой-то текст</div>
-                <div className="date">Сегодня</div>
+                <div className="author">{props.author}</div>
+                <div className="text">{props.text}</div>
+                <div className="date">{props.date}</div>
             </div>
             <div className="comments">
                 {
-                    comments.map(comment => <Comment {...comment}/>)
+                    props.comments.map(comment => <Comment {...comment}/>)
                 }
-                {/* <Comment author={"какой-то автор"} text={"какой-то текст"} date={"сегодня"}/>
-                <Comment author={"какой-то автор"} text={"какой-то текст"} date={"сегодня"}/>
-                <Comment author={"какой-то автор"} text={"какой-то текст"} date={"сегодня"}/> */}
             </div>
         </div>
     )

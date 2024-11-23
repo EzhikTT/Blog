@@ -10,6 +10,7 @@ type Props = {
 }
 
 const Popup = (props: Props) => {
+
     return (
         <div className={"popup" + (props.isShow ? "" : " hide")}>
             <div className="body">

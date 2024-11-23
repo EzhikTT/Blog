@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export type CommentType = {
     author: string
@@ -10,6 +10,15 @@ export type CommentType = {
 const Comment = (props: CommentType) => {
 
     const [isShowComments, seiIsShowComments] = useState(false)
+
+    const [comments, setComments] = useState<CommentType[]>([])
+
+    useEffect(
+        () => {
+            setComments(props?.comments ?? [])
+        },
+        [props]
+    )
 
     return <div className="comment">
         <div className="body">
