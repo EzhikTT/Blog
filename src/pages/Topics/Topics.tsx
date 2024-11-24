@@ -58,8 +58,11 @@ const Topics = () => {
                     <button type="submit">Добавить</button>
                 </form>
             </header>
+            <aside>
+                {/* Информация о текущем пользователе */}
+            </aside>
             <section>
-                {topics.map(topic => <Topic {...topic}/>)}
+                {topics.map((topic, index) => <Topic {...topic} key={`topic_${index}`}/>)}
             </section>
         </main>
     )

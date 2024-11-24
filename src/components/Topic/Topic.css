@@ -1,4 +1,6 @@
-div.topic {}
+div.topic {
+    margin-bottom: 20px;
+}
 div.topic > div.body {
     border: 1px solid black;
 }
