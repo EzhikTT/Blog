@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
 import Popup from "../Popup/Popup";
+import { Comment as TComment } from "../../pages/Topics/Topics";
 
 export type CommentType = {
+    id: number
+    topic: number
+    parent?: number
+
     author: string
     text: string
-    date: string
-    comments?: CommentType[]
+    date?: string
+    comments?: TComment[]
     currentAuthor?: string
 }
 
@@ -14,7 +19,7 @@ const Comment = (props: CommentType) => {
     const [isShowComments, seiIsShowComments] = useState(false)
     const [isShowPopup, setIsShowPopup] = useState(false)
 
-    const [comments, setComments] = useState<CommentType[]>([])
+    const [comments, setComments] = useState<TComment[]>([])
 
     const [author, setAuthor] = useState("")
     const [text, setText] = useState("")
@@ -39,7 +44,11 @@ const Comment = (props: CommentType) => {
             author: author,
             text: text,
             date: date,
-            comments: []
+            comments: [],
+
+            id: 1,
+            topic: 1,
+            parent: 1,
         }
         setComments([...comments, newComment])
         setIsShowPopup(false)

@@ -9,6 +9,9 @@ export type TopicType = {
     date?: string // Если даты нет, то выводится текущая дата
     comments: CommentType[]
     currentAuthor?: string
+
+    id: number
+    delete: (id: number) => void
 }
 
 const Topic = (props: TopicType) => {
@@ -32,7 +35,11 @@ const Topic = (props: TopicType) => {
             author: props.currentAuthor ?? "",
             text: text,
             date: date,
-            comments: []
+            comments: [],
+
+            id: 1,
+            topic: 1,
+            parent: 1,
         }
         setComments([...comments, newComment])
         setIsShowPopup(false)
@@ -44,7 +51,7 @@ const Topic = (props: TopicType) => {
     return (
         <div className="topic">
             <div className="body">
-                <div className="author">{props.author}</div>
+                <div className="author">{props.author} <span onClick={() => props.delete(props.id)}>delete</span></div>
                 <div className="text">{props.text}</div>
                 <div className="date">{props.date}</div>
             </div>

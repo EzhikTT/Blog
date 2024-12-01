@@ -1,17 +1,40 @@
 import React, { FormEvent, useRef, useState } from "react";
-import Topic, { TopicType } from "../../components/Topic/Topic";
+import TopicComponent, { TopicType } from "../../components/Topic/Topic";
 import './Topics.css'
+import Utils from "../../utils/Utils";
+
+export type Comment = {
+    id: number
+    topic: number
+    parent?: number
+
+    author: string
+    text: string
+    date?: string
+    comments: Comment[]
+}
+
+export type Topic = {
+    id: number
+
+    author: string
+    text: string
+    date?: string
+    comments: Comment[]
+}
 
 const Topics = () => {
 
-    const [topics, setTopics] = useState<TopicType[]>([
+    const [topics, setTopics] = useState<Topic[]>([
         {
+            id: 1,
             author: "Some author 1",
             text: "Some text 1",
             date: "",
             comments : []
         },
         {
+            id: 2,
             author: "Some author 2",
             text: "Some text 2",
             date: "",
@@ -25,7 +48,12 @@ const Topics = () => {
 
     const addTopic = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
+
+        const maxId = Utils.getMaxId(topics)
+        // const newId = Utils.getMaxId(topics) + 1
+
         const newTopic = {
+            id: maxId + 1, // newId
             author: author,
             text: text,
             date: dateRef?.current?.value ?? "",
@@ -34,6 +62,23 @@ const Topics = () => {
         const newTopics = [...topics, newTopic]
         // newTopics.push(newTopic)
         setTopics(newTopics)
+    }
+
+    const deleteTopic = (id: number) => {
+        // findIndex, splice
+        const newTopics = [...topics]
+        const index = newTopics.findIndex((topic) => topic.id === id)
+        newTopics.splice(index, 1)
+        setTopics(newTopics)
+
+        // for..of
+        // const newTopics = []
+        // for(const topic of topics){
+        //     if(topic.id !== id){
+        //         newTopics.push({...topic})
+        //     }
+        // }
+        // setTopics(newTopics)
     }
 
     return (
@@ -62,7 +107,9 @@ const Topics = () => {
                 {/* Информация о текущем пользователе */}
             </aside>
             <section>
-                {topics.map((topic, index) => <Topic {...topic} key={`topic_${index}`}/>)}
+                {topics.map((topic, index) => <TopicComponent {...topic} 
+                                                              key={`topic_${index}`} 
+                                                              delete={deleteTopic}/>)}
             </section>
         </main>
     )
