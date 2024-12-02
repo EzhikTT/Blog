@@ -25,6 +25,8 @@ export type Topic = {
 
 const Topics = () => {
 
+    const currentAuthor = "Current author"
+
     const [topics, setTopics] = useState<Topic[]>([
         {
             id: 1,
@@ -54,7 +56,7 @@ const Topics = () => {
 
         const newTopic = {
             id: maxId + 1, // newId
-            author: author,
+            author: currentAuthor,
             text: text,
             date: dateRef?.current?.value ?? "",
             comments : []
@@ -79,6 +81,13 @@ const Topics = () => {
         //     }
         // }
         // setTopics(newTopics)
+    }
+
+    const changeTopic = (id: number, text: string) => {
+        const newTopics = [...topics]
+        const index = newTopics.findIndex((topic) => topic.id === id)
+        newTopics[index].text = text
+        setTopics(newTopics)
     }
 
     return (
@@ -109,6 +118,8 @@ const Topics = () => {
             <section>
                 {topics.map((topic, index) => <TopicComponent {...topic} 
                                                               key={`topic_${index}`} 
+                                                              currentAuthor={currentAuthor}
+                                                              change={changeTopic}
                                                               delete={deleteTopic}/>)}
             </section>
         </main>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Popup from "../Popup/Popup";
 import { Comment as TComment } from "../../pages/Topics/Topics";
+import Utils from "../../utils/Utils";
 
 export type CommentType = {
     id: number
@@ -12,11 +13,13 @@ export type CommentType = {
     date?: string
     comments?: TComment[]
     currentAuthor?: string
+    
+    delete: (id: number) => void
 }
 
 const Comment = (props: CommentType) => {
 
-    const [isShowComments, seiIsShowComments] = useState(false)
+    const [isShowComments, setIsShowComments] = useState(false)
     const [isShowPopup, setIsShowPopup] = useState(false)
 
     const [comments, setComments] = useState<TComment[]>([])
@@ -40,32 +43,45 @@ const Comment = (props: CommentType) => {
     )
 
     const onSubmit = () => {
+        const newId = Utils.getMaxId(comments) + 1
         const newComment = {
             author: author,
             text: text,
             date: date,
             comments: [],
 
-            id: 1,
+            id: newId,
             topic: 1,
             parent: 1,
         }
         setComments([...comments, newComment])
         setIsShowPopup(false)
-        setAuthor("")
+        // setAuthor("")
         setText("")
         setDate("")
     }
 
+    const onDeleteComment = (id: number) => {
+        const newComments = []
+        for(const comment of comments){
+            if(comment.id !== id){
+                newComments.push({...comment})
+            }
+        }
+        setComments(newComments)
+    }
+
     return <div className="comment">
         <div className="body">
-            <div className="author">{props.author}</div>
+            <div className="author">
+                {props.author} <button onClick={() => props.delete(props.id)}>delete</button>
+            </div>
             <div className="text">{props.text}</div>
             <div className="date">{props.date}</div>
         </div>
         {comments?.length && comments?.length > 0 ? <h3>
             Комментарии
-            <button onClick={() => { seiIsShowComments(!isShowComments) }}>
+            <button onClick={() => { setIsShowComments(!isShowComments) }}>
                 {isShowComments ? "скрыть" : "раскрыть"}
             </button>
         </h3> : null}
@@ -98,7 +114,10 @@ const Comment = (props: CommentType) => {
         {(isShowComments && comments?.length && comments?.length > 0) ? (
             <div className="comments">
                 {
-                    comments.map((comment, index) => <Comment {...comment} key={`comment_${index}`}/>)
+                    comments.map((comment, index) => <Comment {...comment} 
+                                                              key={`comment_${index}`}
+                                                              delete={onDeleteComment}
+                                                              currentAuthor={author}/>)
                 }
             </div>
         ) :
