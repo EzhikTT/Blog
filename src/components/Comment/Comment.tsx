@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Popup from "../Popup/Popup";
 import { Comment as TComment } from "../../pages/Topics/Topics";
 import Utils from "../../utils/Utils";
@@ -15,24 +15,36 @@ export type CommentType = {
     currentAuthor?: string
     
     delete: (id: number) => void
+    change: (id: number, text: string) => void
+    add: (comment: TComment) => void
 }
 
 const Comment = (props: CommentType) => {
 
     const [isShowComments, setIsShowComments] = useState(false)
     const [isShowPopup, setIsShowPopup] = useState(false)
-
-    const [comments, setComments] = useState<TComment[]>([])
+    const [isEdit, setIsEdit] = useState(false)
 
     const [author, setAuthor] = useState("")
     const [text, setText] = useState("")
     const [date, setDate] = useState("")
 
+    const ref = useRef<HTMLInputElement>(null)
+
     useEffect(
         () => {
-            setComments(props?.comments ?? [])
+            console.log("props", props)
         },
-        [props.comments]
+        [props]
+    )
+
+    useEffect(
+        () => {
+            if(ref.current){
+                ref.current.value = props.text
+            }
+        },
+        [props.text, ref, isEdit]
     )
 
     useEffect(
@@ -43,43 +55,49 @@ const Comment = (props: CommentType) => {
     )
 
     const onSubmit = () => {
-        const newId = Utils.getMaxId(comments) + 1
         const newComment = {
             author: author,
             text: text,
             date: date,
             comments: [],
 
-            id: newId,
-            topic: 1,
-            parent: 1,
+            id: -1,
+            topic: props.topic,
+            parent: props.id,
         }
-        setComments([...comments, newComment])
+        props.add(newComment)
         setIsShowPopup(false)
-        // setAuthor("")
         setText("")
         setDate("")
     }
 
-    const onDeleteComment = (id: number) => {
-        const newComments = []
-        for(const comment of comments){
-            if(comment.id !== id){
-                newComments.push({...comment})
-            }
-        }
-        setComments(newComments)
+    const onSave = () => {
+        props.change(props.id, ref.current?.value ?? "")
+        setIsEdit(false)
     }
 
     return <div className="comment">
         <div className="body">
             <div className="author">
-                {props.author} <button onClick={() => props.delete(props.id)}>delete</button>
+                {props.author} 
+                <button onClick={() => props.delete(props.id)}>delete</button>
+                {props.currentAuthor === props.author && 
+                    <button onClick={() => setIsEdit(true)}>edit</button>
+                }
             </div>
-            <div className="text">{props.text}</div>
+            <div className="text">
+                {
+                    isEdit ? 
+                    <>
+                        <input ref={ref}/> 
+                        <button onClick={onSave}>save</button>
+                    </>: 
+                    props.text
+                }
+            </div>
             <div className="date">{props.date}</div>
         </div>
-        {comments?.length && comments?.length > 0 ? <h3>
+        {props?.comments?.length && props?.comments?.length > 0 ? <h3>
             Комментарии
             <button onClick={() => { setIsShowComments(!isShowComments) }}>
                 {isShowComments ? "скрыть" : "раскрыть"}
@@ -111,13 +129,15 @@ const Comment = (props: CommentType) => {
                 onCancel={() => setIsShowPopup(false)}
                 onSubmit={onSubmit} />
         </div>
-        {(isShowComments && comments?.length && comments?.length > 0) ? (
+        {(isShowComments && props?.comments?.length && props?.comments?.length > 0) ? (
             <div className="comments">
                 {
-                    comments.map((comment, index) => <Comment {...comment} 
-                                                              key={`comment_${index}`}
-                                                              delete={onDeleteComment}
-                                                              currentAuthor={author}/>)
+                    props?.comments.map((comment, index) => <Comment {...comment} 
+                                                                    key={`comment_${index}`}
+                                                                    delete={props.delete}
+                                                                    change={props.change}
+                                                                    add={props.add}
+                                                                    currentAuthor={author}/>)
                 }
             </div>
         ) :

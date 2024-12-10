@@ -1,4 +1,4 @@
-import React, { FormEvent, useRef, useState } from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import TopicComponent, { TopicType } from "../../components/Topic/Topic";
 import './Topics.css'
 import Utils from "../../utils/Utils";
@@ -44,43 +44,69 @@ const Topics = () => {
         },
     ])
 
+    const [comments, setComments] = useState<Comment[]>([
+        {
+            id: 1,
+            topic: 1,
+            text: "some comment",
+            author: "some author",
+            comments: [] 
+        }
+    ])
+
     const [author, setAutor] = useState('')
     const [text, setText] = useState('')
     const dateRef = useRef<HTMLInputElement>(null)
+
+    useEffect(
+        () => {
+            console.log("comments", comments)
+            const newTopics = [...topics]
+            for(const topic of newTopics){
+                topic.comments = getCommentsForTopic(topic.id)
+            }
+            setTopics(newTopics)
+        },
+        [comments]
+    )
+
+    const getCommentsForTopic = (id: number): Comment[] => {
+        return comments.filter(comment => !comment.parent && comment.topic === id)
+                       .map(comment => ({
+                            ...comment,
+                            comments: getCommentsForComment(comment.id)
+                       }))
+    }
+
+    const getCommentsForComment = (id: number): Comment[] => {
+        return comments.filter(comment => comment.parent && comment.parent === id)
+                        .map(comment => ({
+                            ...comment,
+                            comments: getCommentsForComment(comment.id)
+                        }))
+    }
 
     const addTopic = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
         const maxId = Utils.getMaxId(topics)
-        // const newId = Utils.getMaxId(topics) + 1
 
         const newTopic = {
-            id: maxId + 1, // newId
+            id: maxId + 1,
             author: currentAuthor,
             text: text,
             date: dateRef?.current?.value ?? "",
             comments : []
         }
         const newTopics = [...topics, newTopic]
-        // newTopics.push(newTopic)
         setTopics(newTopics)
     }
 
     const deleteTopic = (id: number) => {
-        // findIndex, splice
         const newTopics = [...topics]
         const index = newTopics.findIndex((topic) => topic.id === id)
         newTopics.splice(index, 1)
         setTopics(newTopics)
-
-        // for..of
-        // const newTopics = []
-        // for(const topic of topics){
-        //     if(topic.id !== id){
-        //         newTopics.push({...topic})
-        //     }
-        // }
-        // setTopics(newTopics)
     }
 
     const changeTopic = (id: number, text: string) => {
@@ -88,6 +114,25 @@ const Topics = () => {
         const index = newTopics.findIndex((topic) => topic.id === id)
         newTopics[index].text = text
         setTopics(newTopics)
+    }
+
+    const addComment = (comment: Comment) => {
+        comment.id = Utils.getMaxId(comments) + 1
+        setComments([...comments, comment])
+    }
+
+    const changeComment = (id: number, text: string) => {
+        const newComments = [...comments]
+        const index = newComments.findIndex(comment => comment.id === id)
+        newComments[index].text = text
+        setComments(newComments)
+    }
+
+    const deleteComment = (id: number) => {
+        const newComments = [...comments]
+        const index = newComments.findIndex(comment => comment.id === id)
+        newComments.splice(index, 1)
+        setComments(newComments)
     }
 
     return (
@@ -120,6 +165,9 @@ const Topics = () => {
                                                               key={`topic_${index}`} 
                                                               currentAuthor={currentAuthor}
                                                               change={changeTopic}
+                                                              addComment={addComment}
+                                                              deleteComment={deleteComment}
+                                                              changeComment={changeComment}
                                                               delete={deleteTopic}/>)}
             </section>
         </main>
