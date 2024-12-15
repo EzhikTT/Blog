@@ -1,7 +1,8 @@
-import React, { FormEvent, useEffect, useRef, useState } from "react";
+import React, { createContext, FormEvent, useEffect, useRef, useState } from "react";
 import TopicComponent, { TopicType } from "../../components/Topic/Topic";
 import './Topics.css'
 import Utils from "../../utils/Utils";
+import TopicsList from "../../components/TopicsList/TopicsList";
 
 export type Comment = {
     id: number
@@ -22,6 +23,18 @@ export type Topic = {
     date?: string
     comments: Comment[]
 }
+
+type Context = {
+    topics?: Topic[]
+    addComment?: (comment: Comment) => void
+    changeComment?: (id: number, text: string) => void
+    deleteComment?: (id: number) => void
+    deleteTopic?: (id: number) => void
+    changeTopic?: (id: number, text: string) => void
+    currentAuthor?: string
+}
+
+export const TopicContext = createContext<Context>({})
 
 const Topics = () => {
 
@@ -136,41 +149,42 @@ const Topics = () => {
     }
 
     return (
-        <main>
-            <header>
-                {/* <button onClick={addTopic}>Add topic</button> */}
-                <form onSubmit={addTopic}>
-                    <label>
-                        <span>автор</span>
-                        <input onChange={event => setAutor(event.target.value)}
-                               value={author}/>
-                    </label>
-                    <label>
-                        <span>текст</span>
-                        <input onChange={event => setText(event.target.value)}
-                               value={text}/>
-                    </label>
-                    <label>
-                        <span>дата</span>
-                        <input ref={dateRef} type="date"/>
-                    </label>
-                    <button type="submit">Добавить</button>
-                </form>
-            </header>
-            <aside>
-                {/* Информация о текущем пользователе */}
-            </aside>
-            <section>
-                {topics.map((topic, index) => <TopicComponent {...topic} 
-                                                              key={`topic_${index}`} 
-                                                              currentAuthor={currentAuthor}
-                                                              change={changeTopic}
-                                                              addComment={addComment}
-                                                              deleteComment={deleteComment}
-                                                              changeComment={changeComment}
-                                                              delete={deleteTopic}/>)}
-            </section>
-        </main>
+        <TopicContext.Provider value={{
+            topics,  // topics: topics
+            addComment, 
+            changeComment, 
+            deleteComment, 
+            deleteTopic, 
+            changeTopic, 
+            currentAuthor // currentAuthor: `${} ${} ${}`
+        }}>
+            <main>
+                <header>
+                    {/* <button onClick={addTopic}>Add topic</button> */}
+                    <form onSubmit={addTopic}>
+                        <label>
+                            <span>автор</span>
+                            <input onChange={event => setAutor(event.target.value)}
+                                value={author}/>
+                        </label>
+                        <label>
+                            <span>текст</span>
+                            <input onChange={event => setText(event.target.value)}
+                                value={text}/>
+                        </label>
+                        <label>
+                            <span>дата</span>
+                            <input ref={dateRef} type="date"/>
+                        </label>
+                        <button type="submit">Добавить</button>
+                    </form>
+                </header>
+                <aside>
+                    {/* Информация о текущем пользователе */}
+                </aside>
+                <TopicsList/>
+            </main>
+        </TopicContext.Provider>
     )
 }
 

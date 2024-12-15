@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Popup from "../Popup/Popup";
-import { Comment as TComment } from "../../pages/Topics/Topics";
+import { Comment as TComment, TopicContext } from "../../pages/Topics/Topics";
 import Utils from "../../utils/Utils";
 
 export type CommentType = {
@@ -12,14 +12,16 @@ export type CommentType = {
     text: string
     date?: string
     comments?: TComment[]
-    currentAuthor?: string
+    // currentAuthor?: string
     
-    delete: (id: number) => void
-    change: (id: number, text: string) => void
-    add: (comment: TComment) => void
+    // delete?: (id: number) => void
+    // change?: (id: number, text: string) => void
+    // add?: (comment: TComment) => void
 }
 
 const Comment = (props: CommentType) => {
+
+    const {addComment, changeComment, deleteComment, currentAuthor} = useContext(TopicContext)
 
     const [isShowComments, setIsShowComments] = useState(false)
     const [isShowPopup, setIsShowPopup] = useState(false)
@@ -49,9 +51,9 @@ const Comment = (props: CommentType) => {
 
     useEffect(
         () => {
-            setAuthor(props.currentAuthor ?? "")
+            setAuthor(currentAuthor ?? "")
         },
-        [props.currentAuthor]
+        [currentAuthor]
     )
 
     const onSubmit = () => {
@@ -65,14 +67,14 @@ const Comment = (props: CommentType) => {
             topic: props.topic,
             parent: props.id,
         }
-        props.add(newComment)
+        addComment?.(newComment)
         setIsShowPopup(false)
         setText("")
         setDate("")
     }
 
     const onSave = () => {
-        props.change(props.id, ref.current?.value ?? "")
+        changeComment?.(props.id, ref.current?.value ?? "")
         setIsEdit(false)
     }
 
@@ -80,8 +82,8 @@ const Comment = (props: CommentType) => {
         <div className="body">
             <div className="author">
                 {props.author} 
-                <button onClick={() => props.delete(props.id)}>delete</button>
-                {props.currentAuthor === props.author && 
+                <button onClick={() => deleteComment?.(props.id)}>delete</button>
+                {currentAuthor === props.author && 
                     <button onClick={() => setIsEdit(true)}>edit</button>
                 }
             </div>
@@ -133,11 +135,7 @@ const Comment = (props: CommentType) => {
             <div className="comments">
                 {
                     props?.comments.map((comment, index) => <Comment {...comment} 
-                                                                    key={`comment_${index}`}
-                                                                    delete={props.delete}
-                                                                    change={props.change}
-                                                                    add={props.add}
-                                                                    currentAuthor={author}/>)
+                                                                    key={`comment_${index}`}/>)
                 }
             </div>
         ) :

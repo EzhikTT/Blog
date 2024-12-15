@@ -1,27 +1,30 @@
-import React, { useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import './Topic.css'
 import Comment, { CommentType } from "../Comment/Comment"
 import Popup from "../Popup/Popup"
 import Utils from "../../utils/Utils"
-import { Comment as TComment } from "../../pages/Topics/Topics"
+import { Comment as TComment, TopicContext } from "../../pages/Topics/Topics"
 
 export type TopicType = {
     author: string
     text: string
     date?: string // Если даты нет, то выводится текущая дата
     comments: TComment[]
-    currentAuthor?: string
+    // currentAuthor?: string
 
     id: number
-    delete: (id: number) => void
-    change: (id: number, text: string) => void
+    // delete?: (id: number) => void
+    // change?: (id: number, text: string) => void
 
-    addComment: (comment: TComment) => void
-    deleteComment: (id: number) => void
-    changeComment: (id: number, text: string) => void 
+    // addComment?: (comment: TComment) => void
+    // deleteComment?: (id: number) => void
+    // changeComment?: (id: number, text: string) => void 
 }
 
 const Topic = (props: TopicType) => {
+
+    const {addComment, changeTopic, deleteTopic, currentAuthor} = useContext(TopicContext)
+
     const [isShowPopup, setIsShowPopup] = useState(false)
 
     const [isEdit, setIsEdit] = useState(false)
@@ -40,7 +43,7 @@ const Topic = (props: TopicType) => {
 
     const onSubmit = () => {
         const newComment = {
-            author: props.currentAuthor ?? "",
+            author: currentAuthor ?? "",
             text: text,
             date: date,
             comments: [],
@@ -48,7 +51,7 @@ const Topic = (props: TopicType) => {
             id: -1,
             topic: props.id
         }
-        props.addComment(newComment)
+        addComment?.(newComment)
         setIsShowPopup(false)
         setAuthor("")
         setText("")
@@ -56,7 +59,7 @@ const Topic = (props: TopicType) => {
     }
 
     const onChangeTopic = () => {
-        props.change(props.id, commentText)
+        changeTopic?.(props.id, commentText)
         setIsEdit(false)
     }
 
@@ -65,8 +68,8 @@ const Topic = (props: TopicType) => {
             <div className="body">
                 <div className="author">
                     {props.author} 
-                    <button onClick={() => props.delete(props.id)}>delete</button>
-                    {props.author === props.currentAuthor && <button onClick={() => setIsEdit(true)}>edit</button>}
+                    <button onClick={() => deleteTopic?.(props.id)}>delete</button>
+                    {props.author === currentAuthor && <button onClick={() => setIsEdit(true)}>edit</button>}
                 </div>
                 <div className="text">
                     {
@@ -89,7 +92,7 @@ const Topic = (props: TopicType) => {
                         <div>
                             <label>
                                 <div>Author</div>
-                                <input value={props.currentAuthor ?? ""}/>
+                                <input value={currentAuthor ?? ""}/>
                             </label>
                             <label>
                                 <div>Text</div>
@@ -108,11 +111,7 @@ const Topic = (props: TopicType) => {
                        onSubmit={onSubmit}/>
                 {
                     props.comments.map((comment, index) => <Comment {...comment} 
-                                                                    key={`comment_${index}`} 
-                                                                    delete={props.deleteComment}
-                                                                    change={props.changeComment}
-                                                                    add={props.addComment}
-                                                                    currentAuthor={props.currentAuthor}/>)
+                                                                    key={`comment_${index}`} />)
                 }
             </div>
         </div>

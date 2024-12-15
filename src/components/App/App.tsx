@@ -5,7 +5,7 @@ import Messanger from '../../pages/ Messanger/Messanger';
 
 function App() {
   return (
-    <Messanger/>
+    <Topics/>
   );
 }
 
